@@ -1,0 +1,24 @@
+Simply write a C# program to receive emails of that particular box as follows:
+
+var client = new POPClient();
+client.Connect("pop.gmail.com", 995, true);
+client.Authenticate("admin@bendytree.com", "YourPasswordHere");
+
+var count = client.GetMessageCount();
+
+// use a for loop to get the subject / message
+Message message = client.GetMessage(count);
+
+Console.WriteLine(message.Headers.Subject);
+
+// message.Headers.From.Address; 
+// from address
+// messagePart.BodyEncoding.GetString(messagePart.Body);
+// message body
+
+modify the above program so that, after receiving the email, the system
+
+inject the subject and message into a db record
+generate a ticket number
+reply to the sender that a ticket (# xxxxxx) has been issued
+follow up all the correspondence using this ticket (store all the correspondence in the db record)
