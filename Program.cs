@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Collections;
 using System.Configuration;
 using System.Collections.Generic;
@@ -35,6 +34,13 @@ namespace mail
             .AddCommandLine(args)
             .Build();
 
+
+        IEmailConfiguration emailConfig = new EmailConfiguration();
+        _appConfiguration.GetSection(nameof(EmailConfiguration)).Bind(emailConfig);
+        Console.WriteLine($"Hello, { emailConfig.SmtpServer } world!");
+
+        IEmailService _emailService = new EmailService(emailConfig);
+        _emailService.ReceiveEmail();
         //var builder = Host.CreateDefaultBuilder().Build();
 
         //IConfigurationBuilder builder = new ConfigurationBuilder().AddJsonFile("appsettings.json", false, true);
@@ -43,10 +49,7 @@ namespace mail
         
         //IEmailConfiguration _emailConfiguration =  _appConfiguration.GetSection("EmailConfiguration").Get<EmailConfiguration>();
 
-        IEmailConfiguration emailConfig = new EmailConfiguration();
-        _appConfiguration.GetSection(nameof(EmailConfiguration)).Bind(emailConfig);
-
-        Console.WriteLine($"Hello, { emailConfig.SmtpServer } world!");
+       
         //Host.CreateDefaultBuilder(args);
 
             // var client = new POPClient();
