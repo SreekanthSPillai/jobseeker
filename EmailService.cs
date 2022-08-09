@@ -31,7 +31,9 @@ public class EmailService : IEmailService
 	{
 		using (var emailClient = new Pop3Client())
 		{
-			emailClient.Connect(_emailConfiguration.PopServer, _emailConfiguration.PopPort, true);
+			emailClient.Connect(_emailConfiguration.PopServer, _emailConfiguration.PopPort, MailKit.Security.SecureSocketOptions.None);
+			//emailClient.Connect("smtp.gmail.com", 587, MailKit.Security.SecureSocketOptions.None);
+
 			emailClient.AuthenticationMechanisms.Remove("XOAUTH2");
 			emailClient.Authenticate(_emailConfiguration.PopUsername, _emailConfiguration.PopPassword);
 
@@ -46,7 +48,9 @@ public class EmailService : IEmailService
 				};
 				emailMessage.ToAddresses.AddRange(message.To.Select(x => (MailboxAddress)x).Select(x => new EmailAddress { Address = x.Address, Name = x.Name }));
 				emailMessage.FromAddresses.AddRange(message.From.Select(x => (MailboxAddress)x).Select(x => new EmailAddress { Address = x.Address, Name = x.Name }));
-							emails.Add(emailMessage);
+				emails.Add(emailMessage);
+
+				Console.WriteLine($"Mail:{i} sub: {emailMessage.Subject}");				
 			}
 
 			return emails;
@@ -70,14 +74,10 @@ public class EmailService : IEmailService
 		{
 			//The last parameter here is to use SSL (Which you should!)
 			emailClient.Connect(_emailConfiguration.SmtpServer, _emailConfiguration.SmtpPort, true);
-
 			//Remove any OAuth functionality as we won't be using it. 
 			emailClient.AuthenticationMechanisms.Remove("XOAUTH2");
-
 			emailClient.Authenticate(_emailConfiguration.SmtpUsername, _emailConfiguration.SmtpPassword);
-
 			emailClient.Send(message);
-
 			emailClient.Disconnect(true);
 		}
 		
